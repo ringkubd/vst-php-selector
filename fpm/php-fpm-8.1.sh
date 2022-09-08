@@ -17,19 +17,19 @@ user = $1
 group = $1
 
 pm = ondemand
-pm.max_children = 16
-request_terminate_timeout = 30s
+pm.max_children = 32
+request_terminate_timeout = 60s
 pm.max_requests = 4000
-pm.process_idle_timeout = 10s
+pm.process_idle_timeout = 20s
 pm.status_path = /status
 
 php_admin_value[upload_tmp_dir] = /home/$1/tmp
 php_admin_value[session.save_path] = /home/$1/tmp
 php_admin_value[open_basedir] = $5:/home/$1/tmp:/bin:/usr/bin:/usr/local/bin:/var/www/html:/tmp:/usr/share:/etc/phpmyadmin:/var/lib/phpmyadmin:/etc/roundcube:/var/log/roundcube:/var/lib/roundcube
-php_admin_value[upload_max_filesize] = 80M
-php_admin_value[max_execution_time] = 20
-php_admin_value[post_max_size] = 80M
-php_admin_value[memory_limit] = 256M
+php_admin_value[upload_max_filesize] = 8000M
+php_admin_value[max_execution_time] = 200
+php_admin_value[post_max_size] = 800M
+php_admin_value[memory_limit] = 1000M
 php_admin_value[sendmail_path] = \"/usr/sbin/sendmail -t -i -f info@$2\"
 php_admin_flag[mysql.allow_persistent] = off
 php_admin_flag[safe_mode] = off
@@ -79,17 +79,22 @@ if [ -f "$pool_file_74" ]; then
     service php7.4-fpm restart
 fi
 
+if [ -f "$pool_file_80" ]; then
+    rm $pool_file_80
+    service php8.0-fpm restart
+fi
+
 write_file=0
-if [ ! -f "$pool_file_80" ]; then
+if [ ! -f "$pool_file_81" ]; then
   write_file=1
 else
-  user_count=$(grep -c "/home/$1/" $pool_file_80)
+  user_count=$(grep -c "/home/$1/" $pool_file_81)
   if [ $user_count -eq 0 ]; then
     write_file=1
   fi
 fi
 if [ $write_file -eq 1 ]; then
-    echo "$pool_conf" > $pool_file_80
+    echo "$pool_conf" > $pool_file_81
     service php8.1-fpm restart
 fi
 if [ -f "/etc/php/8.1/fpm/pool.d/www.conf" ]; then
