@@ -11,7 +11,7 @@ PHPRC=/usr/local/lib
 export PHPRC
 export PHP_FCGI_MAX_REQUESTS=1000
 export PHP_FCGI_CHILDREN=20
-exec  /usr/bin/php-cgi8.1
+exec  /usr/bin/php-cgi8.2
 "
 wrapper_file="$home_dir/$user/web/$domain/cgi-bin/fcgi-starter"
 
